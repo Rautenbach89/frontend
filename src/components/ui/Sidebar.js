@@ -1,17 +1,20 @@
 import { NavLink } from "react-router-dom";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
-import GradingOutlinedIcon from "@mui/icons-material/GradingOutlined";
-import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
-import TopicOutlinedIcon from "@mui/icons-material/TopicOutlined";
-import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import CloseIcon from "@mui/icons-material/Close";
 import { useContext } from "react";
 import useAuth from "../../hooks/useAuth";
 import { LanguageContext } from "../../context/LanguageContext";
 import en from "../../lang/en.json";
 import de from "../../lang/de.json";
+import {
+  faHouse,
+  faFile,
+  faGear,
+  faUsers,
+  faBook,
+  faGraduationCap,
+  faClipboard,
+  faXmark
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ROLES = {
   User: 2001,
@@ -30,43 +33,43 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
     {
       path: "/",
       label: texts.home,
-      icon: <HomeOutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faHouse} />,
       allowedRoles: [ROLES.User, ROLES.Author, ROLES.Admin],
     },
     {
       path: "/tasks",
       label: texts.tasks,
-      icon: <LibraryBooksOutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faFile} />,
       allowedRoles: [ROLES.User, ROLES.Author, ROLES.Admin],
     },
     {
       path: "/exams",
       label: texts.exams,
-      icon: <GradingOutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faBook} />,
       allowedRoles: [ROLES.User, ROLES.Author, ROLES.Admin],
     },
     {
       path: "/courses",
       label: texts.courses,
-      icon: <SchoolOutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faGraduationCap} />,
       allowedRoles: [ROLES.Author],
     },
     {
       path: "/topics",
       label: texts.topics,
-      icon: <TopicOutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faClipboard} />,
       allowedRoles: [ROLES.Author],
     },
     {
       path: "/users",
       label: texts.users,
-      icon: <Groups2OutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faUsers} />,
       allowedRoles: [ROLES.Admin],
     },
     {
       path: "/account",
       label: texts.settings,
-      icon: <SettingsOutlinedIcon />,
+      icon: <FontAwesomeIcon icon={faGear} />,
       allowedRoles: [ROLES.User, ROLES.Author, ROLES.Admin],
     },
   ];
@@ -78,7 +81,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
   return (
     <nav className={sidebarOpen ? "Sidebar Sidebar--open" : "Sidebar"}>
       <div className="navClose" onClick={toggleSidebar}>
-        <CloseIcon fontSize="large" />
+        <FontAwesomeIcon icon={faXmark} fontSize="1.8rem" />
       </div>
       <div className="navMain">
         {filteredNavigationLinks.map((link, index) => (
@@ -88,8 +91,8 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
             to={link.path}
             onClick={toggleSidebar}
           >
-            <li>
-              {link.icon}
+            <li><p className="iconWrapper">{link.icon}</p>
+              
               {link.label}
             </li>
           </NavLink>

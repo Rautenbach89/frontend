@@ -1,13 +1,16 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import ZoomInOutlinedIcon from "@mui/icons-material/ZoomInOutlined";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
 import useAuth from "../hooks/useAuth";
+import {
+  faEdit,
+  faMagnifyingGlass,
+  faTrash
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Tasks = () => {
   const ROLES = {
@@ -24,7 +27,7 @@ const Tasks = () => {
   const navigationLinks = [
     {
       path: "/",
-      icon: <EditOutlinedIcon style={{ color: "black" }} />,
+      icon: <FontAwesomeIcon icon={faEdit} fontSize="1.4rem" style={{ color: "black" }} />,
       allowedRoles: [ROLES.Author],
     },
     {
@@ -138,13 +141,13 @@ const Tasks = () => {
                             : "none",
                         }}
                       >
-                        <EditOutlinedIcon style={{ color: "black" }} />
+                        <FontAwesomeIcon icon={faEdit} fontSize="1.4rem" style={{ color: "black" }} />
                       </button>
                     ) : null}
                   </Link>
                   <Link to={`/tasks/show/${task._id}`}>
                     <button className="ShowButton">
-                      <ZoomInOutlinedIcon style={{ color: "black" }} />
+                      <FontAwesomeIcon icon={faMagnifyingGlass} fontSize="1.4rem" style={{ color: "black" }} />
                     </button>
                   </Link>
                   {filteredNavigationLinks[0] &&
@@ -156,7 +159,7 @@ const Tasks = () => {
                         className="DeleteButton"
                         onClick={() => handleDelete(task._id)}
                       >
-                        <DeleteOutlineOutlinedIcon style={{ color: "black" }} />
+                        <FontAwesomeIcon icon={faTrash} fontSize="1.4rem" style={{ color: "black" }} />
                       </button>
                     ) : null)}
                 </td>

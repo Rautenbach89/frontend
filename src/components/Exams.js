@@ -1,13 +1,16 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import ZoomInOutlinedIcon from "@mui/icons-material/ZoomInOutlined";
-import DownloadIcon from "@mui/icons-material/Download";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
 import useAuth from "../hooks/useAuth";
+import {
+  faMagnifyingGlass,
+  faDownload,
+  faTrash
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Exams = () => {
   const [exams, setExams] = useState([]);
@@ -38,7 +41,7 @@ const Exams = () => {
     };
 
     fetchExams();
-  });
+  }, [auth]);
 
   const handleDelete = async (_id) => {
     const confirmDelete = window.confirm(texts.confirmDeleteCourse);
@@ -106,7 +109,7 @@ const Exams = () => {
                 <td className="td-actions">
                   <Link to={`/exams/show/${exam._id}`}>
                     <button className="ShowButton">
-                      <ZoomInOutlinedIcon style={{ color: "black" }} />
+                      <FontAwesomeIcon icon={faMagnifyingGlass} fontSize="1.4rem" style={{ color: "black" }} />
                     </button>
                   </Link>
                   <button
@@ -114,13 +117,13 @@ const Exams = () => {
                     onClick={() => downloadExam(exam)}
                   >
                     {" "}
-                    <DownloadIcon style={{ color: "black" }} />
+                    <FontAwesomeIcon icon={faDownload} fontSize="1.4rem" style={{ color: "black" }} />
                   </button>
                   <button
                     className="DeleteButton"
                     onClick={() => handleDelete(exam._id)}
                   >
-                    <DeleteOutlineOutlinedIcon style={{ color: "black" }} />
+                    <FontAwesomeIcon icon={faTrash} fontSize="1.4rem" style={{ color: "black" }} />
                   </button>
                 </td>
               </tr>

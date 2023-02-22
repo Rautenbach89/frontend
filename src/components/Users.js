@@ -5,7 +5,10 @@ import { useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import {
+  faEdit
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -74,7 +77,7 @@ const Users = () => {
                 <td className="td-actions">
                   <Link to={`/users/edit/${user._id}`}>
                     <button className="EditButton">
-                      <EditOutlinedIcon style={{ color: "black" }} />
+                      <FontAwesomeIcon icon={faEdit} fontSize="1.4rem" style={{ color: "black" }} />
                     </button>
                   </Link>
                 </td>

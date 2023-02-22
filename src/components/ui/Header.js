@@ -6,6 +6,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { LanguageContext } from "../../context/LanguageContext";
 import en from "../../lang/en.json";
 import de from "../../lang/de.json";
+import {
+faBars
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Header = ({ toggleSidebar }) => {
   const { setAuth } = useContext(AuthContext);
@@ -30,7 +34,7 @@ const Header = ({ toggleSidebar }) => {
     <header>
       <div className="navIconWrapper">
         <div className="toggleNav" onClick={toggleSidebar}>
-          <MenuIcon fontSize="large" />
+          <FontAwesomeIcon icon={faBars} fontSize="1.6rem" />
         </div>
       </div>
       <div className="title">{texts.siteTitle}</div>
@@ -43,7 +47,13 @@ const Header = ({ toggleSidebar }) => {
           <option value="en">{texts.english}</option>
           <option value="de">{texts.german}</option>
         </select>
-        <button className="logoutButton" onClick={logout}>
+        <button
+          className="logoutButton"
+          onClick={() => {
+            toggleSidebar();
+            logout();
+          }}
+        >
           {texts.signOut}
         </button>
       </div>
@@ -63,6 +73,7 @@ const Header = ({ toggleSidebar }) => {
         </select>
         <Link to="/login">
           <button className="logoutButton" onClick={logout}>
+            {" "}
             {texts.signIn}
           </button>
         </Link>

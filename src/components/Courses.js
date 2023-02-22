@@ -1,11 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
+import {
+  faEdit,
+  faTrash
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -82,14 +85,14 @@ const Courses = () => {
                 <td className="td-actions">
                   <Link to={`/courses/edit/${course._id}`}>
                     <button className="EditButton">
-                      <EditOutlinedIcon style={{ color: "black" }} />
+                      <FontAwesomeIcon icon={faEdit} fontSize="1.4rem" style={{ color: "black" }} />
                     </button>
                   </Link>
                   <button
                     className="DeleteButton"
                     onClick={() => handleDelete(course._id)}
                   >
-                    <DeleteOutlineOutlinedIcon style={{ color: "black" }} />
+                    <FontAwesomeIcon icon={faTrash} fontSize="1.4rem" style={{ color: "black" }} />
                   </button>
                 </td>
               </tr>
