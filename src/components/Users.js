@@ -1,0 +1,90 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "../api/axios";
+import { useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext";
+import en from "../lang/en.json";
+import de from "../lang/de.json";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
+const Users = () => {
+  const [users, setUsers] = useState([]);
+  const { language } = useContext(LanguageContext);
+  const texts = language === "en" ? en : de;
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("/users", JSON.stringify(), {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        });
+        // TODO: remove console.logs before deployment
+
+        setUsers(response?.data);
+      } catch (err) {
+        if (err.response) {
+          // Not in the 200 response range
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+        } else {
+          console.log(`Error: ${err.message}`);
+        }
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const roleMapping = {
+    2001: texts.user,
+    1984: texts.author,
+    5150: texts.admin,
+  };
+
+  const formatRoles = (roles) => {
+    return Object.keys(roles)
+      .filter((key) => roles[key] !== undefined)
+      .map((key) => roleMapping[roles[key]])
+      .join(", ");
+  };
+
+  return (
+    <section className="container-wide">
+      <div className="headline">{texts.allUsers}</div>
+      <div>
+        <table className="userTable">
+          <thead>
+            <tr>
+              <th className="td-name">{texts.username}</th>
+              <th className="td-roles">{texts.roles}</th>
+              <th className="td-active">{texts.active}</th>
+              <th className="td-actions">{texts.actions}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user._id}>
+                <td className="td-name">{user.username}</td>
+                <td className="td-roles">{formatRoles(user.roles)}</td>
+                <td className="td-active">
+                  {user.active ? texts.yes : texts.no}
+                </td>
+                <td className="td-actions">
+                  <Link to={`/users/edit/${user._id}`}>
+                    <button className="EditButton">
+                      <EditOutlinedIcon style={{ color: "black" }} />
+                    </button>
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+};
+
+export default Users;
