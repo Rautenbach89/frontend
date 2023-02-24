@@ -1,4 +1,3 @@
-import MenuIcon from "@mui/icons-material/Menu";
 import useAuth from "../../hooks/useAuth";
 import AuthContext from "../../context/AuthProvider";
 import { useContext } from "react";
@@ -50,7 +49,6 @@ const Header = ({ toggleSidebar }) => {
         <button
           className="logoutButton"
           onClick={() => {
-            toggleSidebar();
             logout();
           }}
         >

@@ -532,9 +532,6 @@ label {
 }
 
 
-.checkbox {
-  margin-left: -48%;
-}
 
 button:disabled {
   background-color: #b3daff;

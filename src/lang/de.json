@@ -95,10 +95,4 @@
     "errorUsernameInput": "4 bis 24 Zeichen. Muss mit einem Buchstaben beginnen. Buchstaben, Zahlen und Sonderzeichen erlaubt.",
     "errorPasswordInput": "8 bis 24 Zeichen. Muss Groß- und Kleinbuchstaben, Zahl und Sonderzeichen enthalten. Erlaubte Sonderzeichen: !@#$%",
     "errorConfirmPasswordInput": "Passwörter müssen übereinstimmen."
-
-  
-
-
-
-
   }
