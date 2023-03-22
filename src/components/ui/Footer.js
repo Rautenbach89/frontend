@@ -11,7 +11,7 @@ const Footer = () => {
   return (
     <footer>
       <div>
-        <Link className="Impressum" to="/impressum">
+        <Link className="Imprint" to="/imprint">
           <p>{texts.imprintAndPrivacy}</p>
         </Link>
       </div>
