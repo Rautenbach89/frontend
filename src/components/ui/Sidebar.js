@@ -7,7 +7,6 @@ import de from "../../lang/de.json";
 import {
   faHouse,
   faFile,
-  faGear,
   faUsers,
   faBook,
   faGraduationCap,
@@ -65,12 +64,6 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
       label: texts.users,
       icon: <FontAwesomeIcon icon={faUsers} />,
       allowedRoles: [ROLES.Admin],
-    },
-    {
-      path: "/account",
-      label: texts.settings,
-      icon: <FontAwesomeIcon icon={faGear} />,
-      allowedRoles: [ROLES.User, ROLES.Author, ROLES.Admin],
     },
   ];
 
