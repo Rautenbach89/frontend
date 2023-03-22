@@ -12,6 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+
+  const [sortOrder, setSortOrder] = useState("asc");
   const { language } = useContext(LanguageContext);
   const texts = language === "en" ? en : de;
 
@@ -22,12 +24,10 @@ const Users = () => {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        // TODO: remove console.logs before deployment
 
         setUsers(response?.data);
       } catch (err) {
         if (err.response) {
-          // Not in the 200 response range
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
@@ -39,6 +39,26 @@ const Users = () => {
 
     fetchUsers();
   }, []);
+
+  const handleSort = (sortBy) => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    setUsers(
+      [...users].sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+  
+        if (typeof valA === "string" && typeof valB === "string") {
+          return sortOrder === "asc"
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        } else {
+          return sortOrder === "asc"
+            ? parseInt(valA) - parseInt(valB)
+            : parseInt(valB) - parseInt(valA);
+        }
+      })
+    );
+  };
 
   const roleMapping = {
     2001: texts.user,
@@ -60,9 +80,21 @@ const Users = () => {
         <table className="userTable">
           <thead>
             <tr>
-              <th className="td-name">{texts.username}</th>
-              <th className="td-roles">{texts.roles}</th>
-              <th className="td-active">{texts.active}</th>
+            <th className="td-username">
+                <button className="SortButton" onClick={() => handleSort("username")}>
+                  {texts.username}
+                </button>
+              </th>
+              <th className="td-roles">
+                <button className="SortButton" onClick={() => handleSort("roles")}>
+                  {texts.roles}
+                </button>
+              </th>
+              <th className="td-active">
+                <button className="SortButton" onClick={() => handleSort("active")}>
+                  {texts.active}
+                </button>
+              </th>
               <th className="td-actions">{texts.actions}</th>
             </tr>
           </thead>
