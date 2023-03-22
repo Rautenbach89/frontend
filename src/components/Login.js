@@ -44,7 +44,6 @@ const Login = () => {
         }
       );
       console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
       const userLanguage = response?.data?.language;
@@ -56,13 +55,13 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        setErrMsg(texts.noServerResponse);
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
+        setErrMsg(texts.missingUsernameOrPassword);
       } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized");
+        setErrMsg(texts.unauthorized);
       } else {
-        setErrMsg("Login Failed");
+        setErrMsg(texts.loginFailed);
       }
       errRef.current.focus();
     }
@@ -74,7 +73,6 @@ const Login = () => {
         <p
           ref={errRef}
           className={errMsg ? "errmsg" : "offscreen"}
-          aria-live="assertive"
         >
           {errMsg}
         </p>
