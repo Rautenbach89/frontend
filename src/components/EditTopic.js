@@ -11,7 +11,7 @@ const EditTopic = () => {
   const [description, setDescription] = useState("");
   const [course, setCourse] = useState("");
   const [courses, setCourses] = useState([]);
-  const [setError] = useState("");
+  const [errMsg, setErrMsg] = useState("");
   const navigate = useNavigate();
   const { language } = useContext(LanguageContext);
   const texts = language === "en" ? en : de;
@@ -25,14 +25,12 @@ const EditTopic = () => {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        // TODO: remove console.logs before deployment
 
         setTitle(response.data.title);
         setDescription(response.data.description);
         setCourse(response.data.course);
       } catch (err) {
         if (err.response) {
-          // Not in the 200 response range
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
@@ -52,12 +50,10 @@ const EditTopic = () => {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        // TODO: remove console.logs before deployment
 
         setCourses(response?.data);
       } catch (err) {
         if (err.response) {
-          // Not in the 200 response range
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
@@ -77,13 +73,32 @@ const EditTopic = () => {
       await axios.put(`/topics/${id}`, topic);
       navigate("/topics");
     } catch (err) {
-      setError(err.response.data.error);
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+        if (err.response.status === 401) {
+          setErrMsg(texts.forbiddenError);
+        } else if (err.response.status === 404) {
+          setErrMsg(texts.notFoundError);
+        } else if (err.response.status === 409) {
+          setErrMsg(texts.duplicateTopicError);
+        } else {
+          setErrMsg(texts.error);
+        }
+      } else {
+        console.log(`Error: ${err.message}`);
+        setErrMsg(texts.error);
+      }
     }
-  };
+  }
 
   return (
     <section className="container-wide">
       <div className="headline">{texts.editTopic}</div>
+      <p className={errMsg ? "errmsg" : "offscreen"}>
+        {errMsg}
+      </p>
       <div>
         <form onSubmit={handleSubmit}>
           <label htmlFor="title">{texts.name}</label>
@@ -91,20 +106,23 @@ const EditTopic = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder={texts.topicTitlePlaceholder}
           />
           <label htmlFor="description">{texts.description}</label>
-          <input
+          <textarea
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            placeholder={texts.topicDescriptionPlaceholder}
           />
           <label htmlFor="course">{texts.course}</label>
           <select
             id="course"
             value={course}
             onChange={(e) => setCourse(e.target.value)}
+            
           >
-            <option value="">{texts.selectACourse}</option>
+            <option value="">{texts.selectCoursePlaceholder}</option>
             {courses.map((c) => (
               <option key={c._id} value={c._id}>
                 {c.title}
