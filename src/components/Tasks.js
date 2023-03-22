@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 import axios from "../api/axios";
+import { Link } from "react-router-dom";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
@@ -20,6 +20,7 @@ const Tasks = () => {
   };
 
   const [tasks, setTasks] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
   const { language } = useContext(LanguageContext);
   const texts = language === "en" ? en : de;
   const { auth } = useAuth();
@@ -48,11 +49,9 @@ const Tasks = () => {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        // TODO: remove console.logs before deployment
         setTasks(response?.data);
       } catch (err) {
         if (err.response) {
-          // Not in the 200 response range
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
@@ -65,8 +64,28 @@ const Tasks = () => {
     fetchTasks();
   }, []);
 
+  const handleSort = (sortBy) => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    setTasks(
+      [...tasks].sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+  
+        if (typeof valA === "string" && typeof valB === "string") {
+          return sortOrder === "asc"
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        } else {
+          return sortOrder === "asc"
+            ? parseInt(valA) - parseInt(valB)
+            : parseInt(valB) - parseInt(valA);
+        }
+      })
+    );
+  };
+
   const handleDelete = async (_id) => {
-    const confirmDelete = window.confirm(texts.confirmDeleteCourse);
+    const confirmDelete = window.confirm(texts.confirmDeleteTask);
 
     if (confirmDelete) {
       try {
@@ -91,16 +110,56 @@ const Tasks = () => {
         <table className="TaskTable">
           <thead>
             <tr>
-              <th className="td-name">{texts.title}</th>
-              <th className="td-description">{texts.description}</th>
-              <th className="td-course">{texts.course}</th>
-              <th className="td-topic">{texts.topic}</th>
-              <th className="td-tasktype">{texts.tasktype}</th>
-              <th className="td-duration">{texts.duration}</th>
-              <th className="td-difficulty">{texts.difficulty}</th>
-              <th className="td-points">{texts.points}</th>
-              <th className="td-question">{texts.question}</th>
-              <th className="td-createdBy">{texts.createdBy}</th>
+            <th className="td-title">
+                <button className="SortButton" onClick={() => handleSort("title")}>
+                  {texts.title}
+                </button>
+              </th>
+              <th className="td-description">
+                <button className="SortButton" onClick={() => handleSort("description")}>
+                  {texts.description}
+                </button>
+              </th>
+              <th className="td-course">
+                <button className="SortButton" onClick={() => handleSort("course")}>
+                  {texts.course}
+                </button>
+              </th>
+              <th className="td-topic">
+                <button className="SortButton" onClick={() => handleSort("topic")}>
+                  {texts.topic}
+                </button>
+              </th>
+              <th className="td-tasktype">
+                <button className="SortButton" onClick={() => handleSort("tasktype")}>
+                  {texts.tasktype}
+                </button>
+              </th>
+              <th className="td-duration">
+                <button className="SortButton" onClick={() => handleSort("duration")}>
+                  {texts.duration}
+                </button>
+              </th>
+              <th className="td-difficulty">
+                <button className="SortButton" onClick={() => handleSort("difficulty")}>
+                  {texts.difficulty}
+                </button>
+              </th>
+              <th className="td-points">
+                <button className="SortButton" onClick={() => handleSort("points")}>
+                  {texts.points}
+                </button>
+              </th>
+              <th className="td-question">
+                <button className="SortButton" onClick={() => handleSort("question")}>
+                  {texts.question}
+                </button>
+              </th>
+              <th className="td-createdBy">
+                <button className="SortButton" onClick={() => handleSort("createdBy")}>
+                  {texts.createdBy}
+                </button>
+              </th>
               <th className="td-actions">{texts.actions}</th>
             </tr>
           </thead>
