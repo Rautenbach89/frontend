@@ -6,12 +6,11 @@ export const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
   const { auth } = useAuth();
-  const [language, setLanguage] = useState(auth?.language || "de"); // default language is English or user's preferred language
+  const [language, setLanguage] = useState(auth?.language || "de");
 
   const changeLanguage = (newLanguage) => {
     setLanguage(newLanguage);
 
-    // Update the user's language in the database if logged in
     const username = auth?.user;
     if (username) {
       axios
@@ -25,7 +24,6 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
-  // Update the language when the user changes
   useEffect(() => {
     setLanguage(auth?.language);
   }, [auth]);
