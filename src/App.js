@@ -23,6 +23,7 @@ import EditTopic from "./components/EditTopic";
 import Users from "./components/Users";
 import EditUser from "./components/EditUser";
 
+import Imprint from "./components/Imprint";
 import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
@@ -39,12 +40,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* public routes */}
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="unauthorized" element={<Unauthorized />} />
-
-        {/* we want to protect these routes */}
+	<Route path="imprint" element={<Imprint />} />
         <Route
           element={
             <RequireAuth
@@ -135,7 +134,6 @@ function App() {
           <Route path="/users/edit/:id" element={<EditUser />} />
         </Route>
 
-        {/* catch all */}
         <Route path="*" element={<Missing />} />
       </Route>
     </Routes>
