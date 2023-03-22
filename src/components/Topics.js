@@ -12,6 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Topics = () => {
   const [topics, setTopics] = useState([]);
+  const [errMsg, setErrMsg] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
   const { language } = useContext(LanguageContext);
   const texts = language === "en" ? en : de;
 
@@ -22,12 +24,10 @@ const Topics = () => {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        // TODO: remove console.logs before deployment
 
         setTopics(response?.data);
       } catch (err) {
         if (err.response) {
-          // Not in the 200 response range
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
@@ -40,9 +40,29 @@ const Topics = () => {
     fetchTopics();
   }, []);
 
-  const handleDelete = async (_id) => {
-    const confirmDelete = window.confirm(texts.confirmDeleteCourse);
+  const handleSort = (sortBy) => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    setTopics(
+      [...topics].sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+  
+        if (typeof valA === "string" && typeof valB === "string") {
+          return sortOrder === "asc"
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        } else {
+          return sortOrder === "asc"
+            ? parseInt(valA) - parseInt(valB)
+            : parseInt(valB) - parseInt(valA);
+        }
+      })
+    );
+  };
 
+  const handleDelete = async (_id) => {
+    const confirmDelete = window.confirm(texts.confirmDeleteTopic);
+  
     if (confirmDelete) {
       try {
         await axios.delete(`/topics/${_id}`, { data: { _id } });
@@ -52,8 +72,18 @@ const Topics = () => {
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
+          if (err.response.status === 401) {
+            setErrMsg(texts.forbiddenError);
+          } else if (err.response.status === 404) {
+            setErrMsg(texts.notFoundError);
+          } else if (err.response.status === 420) {
+            setErrMsg(texts.topicUsedError);
+          } else {
+            setErrMsg(texts.error);
+          }
         } else {
           console.log(`Error: ${err.message}`);
+          setErrMsg(texts.error);
         }
       }
     }
@@ -62,13 +92,28 @@ const Topics = () => {
   return (
     <section className="container-wide">
       <div className="headline">{texts.allTopics}</div>
+      <p className={errMsg ? "errmsg" : "offscreen"}>
+          {errMsg}
+        </p>
       <div>
         <table className="TopicTable">
           <thead>
             <tr>
-              <th className="td-name">{texts.name}</th>
-              <th className="td-description">{texts.description}</th>
-              <th className="td-course">{texts.course}</th>
+            <th className="td-name">
+                <button className="SortButton" onClick={() => handleSort("title")}>
+                  {texts.name}
+                </button>
+              </th>
+              <th className="td-description">
+                <button className="SortButton" onClick={() => handleSort("description")}>
+                  {texts.description}
+                </button>
+              </th>
+              <th className="td-course">
+                <button className="SortButton" onClick={() => handleSort("course")}>
+                  {texts.course}
+                </button>
+              </th>
               <th className="td-actions">{texts.actions}</th>
             </tr>
           </thead>
