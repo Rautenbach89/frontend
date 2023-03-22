@@ -3,6 +3,8 @@ import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { LanguageContext } from "../context/LanguageContext";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
 
@@ -13,6 +15,7 @@ function ExamForm() {
   const [topics, setTopics] = useState([]);
   const [notes, setNotes] = useState([]);
   const [blocks, setBlocks] = useState([]);
+  const [errMsg, setErrMsg] = useState("");
   const navigate = useNavigate();
   const { auth } = useAuth();
   const { language } = useContext(LanguageContext);
@@ -38,7 +41,9 @@ function ExamForm() {
     const fetchTopics = async () => {
       if (selectedCourse) {
         try {
-          const response = await axios.get(`/courses/${selectedCourse}/topics`);
+          const response = await axios.get(
+            `/courses/${selectedCourse}/topics`
+          );
           setTopics(response.data);
         } catch (err) {
           console.error(err);
@@ -77,9 +82,24 @@ function ExamForm() {
   };
 
   const handleSubmit = async (event) => {
-    console.log(blocks);
-
     event.preventDefault();
+
+    const isBlockNameDefined = blocks.every((block) => block.blockName);
+    const isBlockDurationDefined = blocks.every((block) => block.blockDuration);
+    const isBlockTopicDefined = blocks.every((block) => block.topic);
+
+    if (!isBlockNameDefined) {
+      setErrMsg(texts.blockMissingName);
+      return;
+    }
+    if (!isBlockDurationDefined) {
+      setErrMsg(texts.blockMissingDuration);
+      return;
+    }
+    if (!isBlockTopicDefined) {
+      setErrMsg(texts.blockMissingTopic);
+      return;
+    }
     const examData = {
       title,
       course: selectedCourse,
@@ -90,10 +110,9 @@ function ExamForm() {
     try {
       await axios.post("/exams", examData);
       navigate("/exams");
-      // Redirect to exam page or show success message to user
     } catch (error) {
       console.error(error);
-      // Show error message to user
+      setErrMsg(texts.errNewExam);
     }
   };
 
@@ -109,6 +128,7 @@ function ExamForm() {
               name="title"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
+              placeholder={texts.examTitlePlaceholder}
             />
           </div>
         </label>
@@ -116,6 +136,7 @@ function ExamForm() {
           {texts.course}
           <div>
             <select id="course" onChange={handleCourseSelect}>
+              <option value="">{texts.selectCoursePlaceholder}</option>
               {courses.map((course) => (
                 <option key={course._id} value={course._id}>
                   {course.title}
@@ -130,29 +151,43 @@ function ExamForm() {
             name="notes"
             value={notes}
             onChange={(event) => setNotes(event.target.value.split("\n"))}
+            placeholder={texts.examImportantNotesPlaceholder}
           />
         </label>
-        {blocks.map((block, index) => (
-          <div key={index}>
-            <label>
-              {texts.blockName}
-              <div>
+                {blocks.map((block, index) => (
+         <div key={index}>
+         <label htmlFor={`answer-${index}`}>
+           {texts.block} {index + 1}
+           <button
+             type="button"
+             className="RemoveAnswerButton"
+             onClick={() => handleDeleteBlock(index)}
+           >
+             <FontAwesomeIcon
+               icon={faTrash}
+               fontSize="1rem"
+               style={{ color: "black" }}
+             />
+           </button>
+         </label>
                 <input
                   type="text"
                   name="blockName"
                   value={block.blockName}
                   onChange={(event) => handleBlockChange(index, event)}
+                  placeholder={texts.examSubjectAreaNamePlaceholder}
                 />
-              </div>
-            </label>
             <label>
               {texts.blockDuration} {texts.inMinutes}
               <div>
                 <input
-                  type="text"
+                  type="number"
                   name="blockDuration"
+                  min="1"
+                  max="90"
                   value={block.blockDuration}
                   onChange={(event) => handleBlockChange(index, event)}
+                  placeholder={texts.examSubjectAreaDurationPlaceholder}
                 />
               </div>
             </label>
@@ -163,6 +198,8 @@ function ExamForm() {
                   id={`topic${index}`}
                   onChange={(event) => handleTopicChange(event, index)}
                 >
+                  <option value="">{texts.examSelectTopicPlaceholder}</option>
+
                   {topics.map((topic) => (
                     <option key={topic._id} value={topic._id}>
                       {topic.title}
@@ -185,16 +222,16 @@ function ExamForm() {
           </div>
           <div>
             <button
-              type="button"
+              type="submit"
               className="submitButton"
-              onClick={handleDeleteBlock}
+              disabled={!title || !selectedCourse}
             >
-              {texts.deleteBlock}
-            </button>
-            <div></div>
-            <button type="submit" className="submitButton">
               {texts.createExam}
             </button>
+            <div className="ErrMsgWrapper">
+              {" "}
+              <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p>
+            </div>
           </div>
         </div>
       </form>
