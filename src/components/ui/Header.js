@@ -23,8 +23,6 @@ const Header = ({ toggleSidebar }) => {
   const texts = language === "en" ? en : de;
 
   const logout = async () => {
-    // if used in more components, this should be in context
-    // axios to /logout endpoint
     setAuth({});
     navigate("/login");
   };
