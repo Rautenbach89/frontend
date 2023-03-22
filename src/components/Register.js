@@ -61,7 +61,7 @@ const Register = () => {
     const v1 = USER_REGEX.test(user);
     const v2 = PWD_REGEX.test(pwd);
     if (!v1 || !v2) {
-      setErrMsg("Invalid Entry");
+      setErrMsg(texts.invalidEntry);
       return;
     }
     try {
@@ -73,21 +73,18 @@ const Register = () => {
           withCredentials: true,
         }
       );
-      // TODO: remove console.logs before deployment
       console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response))
       setSuccess(true);
-      //clear state and controlled inputs
       setUser("");
       setPwd("");
       setMatchPwd("");
     } catch (err) {
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        setErrMsg(texts.noServerResponse);
       } else if (err.response?.status === 409) {
-        setErrMsg("Username Taken");
+        setErrMsg(texts.usernameTaken);
       } else {
-        setErrMsg("Registration Failed");
+        setErrMsg(texts.registrationFailed);
       }
       errRef.current.focus();
     }
@@ -97,9 +94,9 @@ const Register = () => {
     <>
       {success ? (
         <section className="container-small">
-          <div className="headline">{texts.success}</div>
+          <div className="headline">{texts.success}!</div>
           <p>
-            <Link activeClassName="active-link" to="/login">
+            <Link className="formLink" to="/login">
               {texts.toLoginPage}
             </Link>
           </p>
@@ -110,7 +107,6 @@ const Register = () => {
             <p
               ref={errRef}
               className={errMsg ? "errmsg" : "offscreen"}
-              aria-live="assertive"
             >
               {errMsg}
             </p>
@@ -135,8 +131,6 @@ const Register = () => {
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
                 required
-                aria-invalid={validName ? "false" : "true"}
-                aria-describedby="uidnote"
                 onFocus={() => setUserFocus(true)}
                 onBlur={() => setUserFocus(false)}
               />
@@ -167,8 +161,6 @@ const Register = () => {
                 onChange={(e) => setPwd(e.target.value)}
                 value={pwd}
                 required
-                aria-invalid={validPwd ? "false" : "true"}
-                aria-describedby="pwdnote"
                 onFocus={() => setPwdFocus(true)}
                 onBlur={() => setPwdFocus(false)}
               />
@@ -197,8 +189,6 @@ const Register = () => {
                 onChange={(e) => setMatchPwd(e.target.value)}
                 value={matchPwd}
                 required
-                aria-invalid={validMatch ? "false" : "true"}
-                aria-describedby="confirmnote"
                 onFocus={() => setMatchFocus(true)}
                 onBlur={() => setMatchFocus(false)}
               />
