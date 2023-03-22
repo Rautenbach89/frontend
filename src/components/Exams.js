@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 import axios from "../api/axios";
+import { Link } from "react-router-dom";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../lang/en.json";
 import de from "../lang/de.json";
@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Exams = () => {
   const [exams, setExams] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
   const { language } = useContext(LanguageContext);
   const texts = language === "en" ? en : de;
   const { auth } = useAuth();
@@ -26,11 +27,9 @@ const Exams = () => {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        // TODO: remove console.logs before deployment
         setExams(response?.data);
       } catch (err) {
         if (err.response) {
-          // Not in the 200 response range
           console.log(err.response.data);
           console.log(err.response.status);
           console.log(err.response.headers);
@@ -43,8 +42,28 @@ const Exams = () => {
     fetchExams();
   }, [auth]);
 
+  const handleSort = (sortBy) => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    setExams(
+      [...exams].sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+  
+        if (typeof valA === "string" && typeof valB === "string") {
+          return sortOrder === "asc"
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        } else {
+          return sortOrder === "asc"
+            ? parseInt(valA) - parseInt(valB)
+            : parseInt(valB) - parseInt(valA);
+        }
+      })
+    );
+  };
+
   const handleDelete = async (_id) => {
-    const confirmDelete = window.confirm(texts.confirmDeleteCourse);
+    const confirmDelete = window.confirm(texts.confirmDeleteExam);
 
     if (confirmDelete) {
       try {
@@ -90,9 +109,21 @@ const Exams = () => {
         <table className="ExamTable">
           <thead>
             <tr>
-              <th className="td-name">{texts.name}</th>
-              <th className="td-course">{texts.course}</th>
-              <th className="td-duration">{texts.duration}</th>
+            <th className="td-name">
+                <button className="SortButton" onClick={() => handleSort("title")}>
+                  {texts.title}
+                </button>
+              </th>
+              <th className="td-course">
+                <button className="SortButton" onClick={() => handleSort("course")}>
+                  {texts.course}
+                </button>
+              </th>
+              <th className="td-duration">
+                <button className="SortButton" onClick={() => handleSort("examDuration")}>
+                  {texts.duration}
+                </button>
+              </th>
               <th className="td-actions">{texts.actions}</th>
             </tr>
           </thead>
